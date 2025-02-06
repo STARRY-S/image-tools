@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type signOpts struct {
+type signOpts_v1 struct {
 	file           string
 	arch           []string
 	os             []string
@@ -32,21 +32,21 @@ type signOpts struct {
 	tlsVerify      commonFlag.OptionalBool
 }
 
-type signCmd struct {
+type signCmd_v1 struct {
 	*baseCmd
-	*signOpts
+	*signOpts_v1
 }
 
-func newSignCmd() *signCmd {
-	cc := &signCmd{
-		signOpts: new(signOpts),
+func newSign_v1_Cmd() *signCmd_v1 {
+	cc := &signCmd_v1{
+		signOpts_v1: new(signOpts_v1),
 	}
 	cc.baseCmd = newBaseCmd(&cobra.Command{
-		Use:   "sign -f IMAGE_LIST.txt --key SIGSTORE.key",
+		Use:   "signv1 -f IMAGE_LIST.txt --key SIGSTORE.key",
 		Short: "Sign multiple container images with sigstore private key",
 		Long:  ``,
 		Example: `# Sign the images with sigstore private key file.
-hangar sign \
+hangar signv1 \
 	--file IMAGE_LIST.txt \
 	--sigstore-key SIGSTORE.key \
 	--sigstore-passphrase-file "/path/to/passphrase/file" \
@@ -102,7 +102,7 @@ hangar sign \
 	return cc
 }
 
-func (cc *signCmd) prepareHangar() (hangar.Hangar, error) {
+func (cc *signCmd_v1) prepareHangar() (hangar.Hangar, error) {
 	if cc.file == "" {
 		return nil, fmt.Errorf("image list file not provided, use '--file' option to specify the image list file")
 	}
@@ -214,7 +214,7 @@ func (cc *signCmd) prepareHangar() (hangar.Hangar, error) {
 }
 
 // getRegistrySet only gets the registry set: map[registry-url]true.
-func (cc *signCmd) getRegistrySet(images []string) map[string]bool {
+func (cc *signCmd_v1) getRegistrySet(images []string) map[string]bool {
 	set := map[string]bool{}
 	if cc.registry != "" {
 		// The registry of image list were overrided by command option.

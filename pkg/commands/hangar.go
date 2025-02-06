@@ -90,7 +90,7 @@ func (cc *hangarCmd) addCommands() {
 func run(h hangar.Hangar) error {
 	if err := h.Run(signalContext); err != nil {
 		// Error occurred while run, save copy failed image to file.
-		if err := h.SaveFailedImages(); err != nil {
+		if err := h.FailedImages(); err != nil {
 			return err
 		}
 		return err
@@ -103,7 +103,7 @@ func run(h hangar.Hangar) error {
 func validate(h hangar.Hangar) error {
 	if err := h.Validate(signalContext); err != nil {
 		// Error occurred while validate, save validate failed image to file.
-		if err := h.SaveFailedImages(); err != nil {
+		if err := h.FailedImages(); err != nil {
 			return err
 		}
 		return err

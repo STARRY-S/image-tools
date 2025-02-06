@@ -22,7 +22,7 @@ type signObject struct {
 	id      int
 }
 
-type Signer struct {
+type signer struct {
 	*common
 
 	// sigstorePublicKey is the file path of the sigstore public key
@@ -38,7 +38,7 @@ type Signer struct {
 }
 
 // Signer implements functions of Hangar interface.
-var _ Hangar = &Signer{}
+var _ Hangar = &signer{}
 
 type SignerOpts struct {
 	CommonOpts
@@ -48,8 +48,8 @@ type SignerOpts struct {
 	Project         string
 }
 
-func NewSigner(o *SignerOpts) (*Signer, error) {
-	s := &Signer{
+func NewSigner(o *SignerOpts) (*signer, error) {
+	s := &signer{
 		sigstorePublicKey: o.SigstorePublicKey,
 		exactRepository:   o.ExactRepository,
 		Registry:          o.Registry,
@@ -63,7 +63,7 @@ func NewSigner(o *SignerOpts) (*Signer, error) {
 	return s, nil
 }
 
-func (s *Signer) sign(ctx context.Context) {
+func (s *signer) sign(ctx context.Context) {
 	s.common.initErrorHandler(ctx)
 	s.common.initWorker(ctx, s.worker)
 	for i, line := range s.common.images {
@@ -112,7 +112,7 @@ func (s *Signer) sign(ctx context.Context) {
 	s.waitWorkers()
 }
 
-func (s *Signer) worker(ctx context.Context, o any) {
+func (s *signer) worker(ctx context.Context, o any) {
 	if o == nil {
 		return
 	}
@@ -170,7 +170,7 @@ func (s *Signer) worker(ctx context.Context, o any) {
 }
 
 // Run sign all images in the registry server.
-func (s *Signer) Run(ctx context.Context) error {
+func (s *signer) Run(ctx context.Context) error {
 	s.sign(ctx)
 	if len(s.failedImageSet) != 0 {
 		v := make([]string, 0, len(s.failedImageSet))
@@ -183,7 +183,7 @@ func (s *Signer) Run(ctx context.Context) error {
 	return nil
 }
 
-func (s *Signer) Validate(ctx context.Context) error {
+func (s *signer) Validate(ctx context.Context) error {
 	s.validate(ctx)
 	if len(s.failedImageSet) != 0 {
 		v := make([]string, 0, len(s.failedImageSet))
@@ -197,7 +197,7 @@ func (s *Signer) Validate(ctx context.Context) error {
 	return nil
 }
 
-func (s *Signer) validate(ctx context.Context) {
+func (s *signer) validate(ctx context.Context) {
 	s.common.initErrorHandler(ctx)
 	s.initWorker(ctx, s.validateWorker)
 	for i, line := range s.common.images {
@@ -246,7 +246,7 @@ func (s *Signer) validate(ctx context.Context) {
 	s.waitWorkers()
 }
 
-func (s *Signer) validateWorker(ctx context.Context, o any) {
+func (s *signer) validateWorker(ctx context.Context, o any) {
 	if o == nil {
 		return
 	}
